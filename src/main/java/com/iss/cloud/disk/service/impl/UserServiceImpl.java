@@ -7,7 +7,7 @@ import com.iss.cloud.disk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -18,7 +18,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private HDFSService hdfsService;
-
+    
+    @Autowired
+    private FileDao fileDao;
+    
+    @Autowired
+    private HttpServletRequest request;
+    
     @Override
     public User login(String username, String password) {
         User user = this.userDao.login(username, password);
