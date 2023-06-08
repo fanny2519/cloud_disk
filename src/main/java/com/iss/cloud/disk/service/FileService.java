@@ -53,4 +53,15 @@ public interface FileService {
     ResultModel share(int[] ids, int fileId, User currentUser);
 
 
+
+    /**
+     * 获得收藏文件列表
+     */
+    Pagination<MyFile> getCollectFiles(Pagination page);
+
+    //获取收藏页面
+    ResultModel collectFile(int id);
+
+    //取消收藏
+    ResultModel notcollection(int id);
 }

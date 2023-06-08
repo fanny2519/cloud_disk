@@ -50,4 +50,16 @@ public interface FileDao {
     int temDelete(int ids);
 
     int reduction(int id);
+
+    //获取收藏列表
+    int getCollectCount(@Param("flag") int flag, @Param("userId") int userId, @Param("pid") int pid);
+
+    List<MyFile>getCollectFiles(@Param("start") Integer start, @Param("pageSize") Integer pageSize, @Param("userId") int userId);
+
+    ///收藏
+    int collectFile(int id);
+
+    //    //取消收藏
+    int notcollection(int id);
+
 }

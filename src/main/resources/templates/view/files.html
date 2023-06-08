@@ -154,10 +154,24 @@
                         {field: 'filePath', title: '文件路径', align: 'left'},
                         {field: 'user.username', title: '上传用户', align: 'left'},
                         {field: 'createTime', title: '上传时间', align: 'left'},
+<!--                        {-->
+<!--                            field: 'id', title: '操作', align: 'center', formatter: function (value, row, index) {-->
+<!--                                return '<a href="#" onclick="collection(\'' + value + '\')">收藏</a>&nbsp;&nbsp;'-->
+<!--                                    + '<a href="#" onclick="shareFile(\'' + value + '\')">分享</a>';-->
+<!--                            }-->
+<!--                        },-->
                         {
                             field: 'id', title: '操作', align: 'center', formatter: function (value, row, index) {
-                                return '<a href="#" onclick="collection(\'' + value + '\')">收藏</a>&nbsp;&nbsp;'
-                                    + '<a href="#" onclick="shareFile(\'' + value + '\')">分享</a>';
+
+                               /* return '<a href="#" onclick="collection(\'' + value + '\')">收藏</a>&nbsp;&nbsp;'
+                                    + '<a href="#" onclick="shareFile(\'' + value + '\')">分享</a>';*/
+
+                                if (row.isCollect == 1) {
+                                    return  '<a href="#" onclick="shareFile(\'' + value + '\')">分享</a>';
+                                }else{
+                                    return '<a href="#" onclick="collection(\'' + value + '\')">收藏</a>&nbsp;&nbsp;'
+                                        + '<a href="#" onclick="shareFile(\'' + value + '\')">分享</a>';
+                                }
                             }
                         }
                     ],
@@ -448,27 +462,40 @@
                     });
                 }
 
-        // 批量删除
-        function temDelete() {
-        var datas = $('#fileTable').bootstrapTable('getSelections');
-        if (datas.length == 0) {
-            swal('Warning', 'Please select data to operate !', 'warning');
-            return;
-        }
-        let ids = '';
-        for (let i = 0; i < datas.length; i++) {
-            ids += ',' + datas[i].id;
-        }
-        console.log(ids.substring(1));
-        $.post('[[${#request.getContextPath()}]]/file/temDelete',{ids: ids.substring(1)} , function (result) {
-            if (result.operate) {
-                swal('Deleted!', result.msg, 'success');
-                $('#fileTable').bootstrapTable('refresh');
-            } else {
-                swal('Failure!', result.msg, 'error');
+            // 批量删除
+            function temDelete() {
+            var datas = $('#fileTable').bootstrapTable('getSelections');
+            if (datas.length == 0) {
+                swal('Warning', 'Please select data to operate !', 'warning');
+                return;
             }
-        }, 'json');
-    }
+            let ids = '';
+            for (let i = 0; i < datas.length; i++) {
+                ids += ',' + datas[i].id;
+            }
+            console.log(ids.substring(1));
+            $.post('[[${#request.getContextPath()}]]/file/temDelete',{ids: ids.substring(1)} , function (result) {
+                if (result.operate) {
+                    swal('Deleted!', result.msg, 'success');
+                    $('#fileTable').bootstrapTable('refresh');
+                } else {
+                    swal('Failure!', result.msg, 'error');
+                }
+            }, 'json');
+        }
+
+
+            // 收藏
+            function collection(id) {
+                $.get('/disk/file/collectFile', {id: id}, function (result) {
+                    if (result.operate) {
+                        swal("collectFile!", result.msg, "success");
+                        $('#fileTable').bootstrapTable('refresh');
+                    } else {
+                        swal("Failure!", result.msg);
+                    }
+                }, 'json');
+            }
 
 
             </script>

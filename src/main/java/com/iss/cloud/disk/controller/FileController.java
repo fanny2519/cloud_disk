@@ -139,4 +139,29 @@ public class FileController {
         return this.fileService.share(ids, fileId, currentUser);
     }
 
+
+    //收藏列表
+    @GetMapping("/getCollectFiles")
+    @ResponseBody
+    public Pagination<MyFile> getCollectFiles(Pagination page) {
+        return this.fileService.getCollectFiles(page);
+    }
+
+    //收藏页面
+    @GetMapping(value = "/collectFile")
+    @ResponseBody
+    public ResultModel collectFile(@RequestParam int id) {
+//        logger.info("...collectFile...request params is {} " + JSON.toJSONString(id));
+        return this.fileService.collectFile(id);
+    }
+
+    @PostMapping("/notCollection")
+    @ResponseBody
+    public ResultModel notCollection(HttpServletRequest request) {
+        logger.info("...getCollectFiles  ...request params is {} " + JSON.toJSONString(Integer.parseInt(request.getParameter("id"))));
+        return this.fileService.notcollection(Integer.parseInt(request.getParameter("id")));
+
+    }
+
+
 }

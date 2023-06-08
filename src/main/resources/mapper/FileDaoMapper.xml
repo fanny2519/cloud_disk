@@ -168,4 +168,42 @@
         limit #{start}, #{pageSize}
     </select>
 
+
+    <!--收藏功能-->
+
+    <select id="getCollectCount" resultType="java.lang.Integer">
+        select count(*) from file
+        <where>
+            userId = #{userId}
+            <choose>
+                <when test="flag == 1">
+                    and isCollect = 1 and isRecovery = 0
+                </when>
+                <when test="flag == 2">
+                    and isRecovery = 1
+                </when>
+                <when test="flag == 3">
+                    and pid = #{pid} and isRecovery = 0
+                </when>
+                <otherwise>
+                    and isRecovery = 0
+                </otherwise>
+            </choose>
+        </where>
+    </select>
+
+    <select id="getCollectFiles" resultMap="fileMap">
+        <include refid="joinColumn"/>
+        where a.isRecovery = 0 and a.pid = 0 and a.userId = #{userId} and isCollect = 1
+        limit #{start}, #{pageSize}
+    </select>
+
+    <update id="collectFile" parameterType="java.lang.Integer">
+        update file set isCollect = 1 where id = #{id}
+    </update>
+
+    <insert id="notcollection" parameterType="MyFile">
+        update file set isCollect = 0 where id = #{id}
+    </insert>
+
 </mapper>

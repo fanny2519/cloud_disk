@@ -220,4 +220,30 @@ public class FileServiceImpl implements FileService {
         }
         return this.messageService.insert(messages);
     }
+
+    //收藏列表
+    @Override
+    public Pagination<MyFile> getCollectFiles(Pagination page) {
+        int start = (page.getPageNum() - 1) * page.getPageSize();
+        List<MyFile> rows = this.fileDao.getCollectFiles(start, page.getPageSize(), page.getCurrentUser());
+        page.setRows(rows);
+        int total = this.fileDao.getCollectCount(1, page.getCurrentUser(), 0);
+        page.setTotal(total);
+        return page;
+    }
+
+    // 收藏文件
+    @Override
+    public ResultModel collectFile(int id) {
+        return this.fileDao.collectFile(id) > 0 ? ResultModel.success() : ResultModel.error();
+    }
+
+
+    ///取消收藏
+    @Override
+    public ResultModel notcollection(int id) {
+        int result = this.fileDao.notcollection(id);
+        return result > 0 ? ResultModel.success("True") : ResultModel.error();
+    }
+
 }
