@@ -95,8 +95,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultModel delete(int[] ids) {
-        int result = this.userDao.delete(ids);
-        return result > 0 ? ResultModel.success("Your imaginary data has been deleted.") : ResultModel.dbError();
+       Integer currentUserId = ((User) request.getSession().getAttribute("user")).getId();
+        for (Integer userId : ids) {
+            int userRole = this.userDao.getRole(currentUserId);
+//            System.out.println(userRole);
+            if (userRole==1) {
+                String filePath = this.fileDao.getFilesPath(userId);
+                int file_exit = this.fileDao.exists(filePath);
+                if (file_exit > 0){
+                    String[] parts = filePath.split("/");
+                    this.hdfsService.delete("/"+parts[1]);
+                    this.fileDao.deletefiles(userId);
+                    this.userDao.delete(ids);
+                }else {
+                    this.userDao.delete(ids);
+                }
+            }else {
+                return ResultModel.error("You don't have permission ");
+            }
+
+        }
+        return ResultModel.success("Your imaginary data has been deleted.");
 
     }
 
