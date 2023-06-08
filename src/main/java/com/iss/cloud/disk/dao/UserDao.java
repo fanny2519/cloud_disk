@@ -27,7 +27,7 @@ public interface UserDao {
 
     int updateUser(User user);
 
-    int delete(int[] ids);
+    int delete(List<Integer> ids);
 
 
 //    修改头像
