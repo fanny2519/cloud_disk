@@ -1,5 +1,6 @@
 package com.iss.cloud.disk.service.impl;
 
+import com.iss.cloud.disk.dao.FileDao;
 import com.iss.cloud.disk.model.*;
 import com.iss.cloud.disk.dao.UserDao;
 import com.iss.cloud.disk.service.HDFSService;
@@ -100,7 +101,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultModel delete(int[] ids) {
+    public ResultModel delete(List<Integer> ids) {
        Integer currentUserId = ((User) request.getSession().getAttribute("user")).getId();
         for (Integer userId : ids) {
             int userRole = this.userDao.getRole(currentUserId);
