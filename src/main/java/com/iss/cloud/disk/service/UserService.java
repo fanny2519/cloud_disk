@@ -28,4 +28,6 @@ public interface UserService {
     ResultModel delete(int[] ids);
 
     ResultModel updatePhoto(User user);
+
+    ResultModel grantAuthorization(int[] ids, int[] roleId);
 }

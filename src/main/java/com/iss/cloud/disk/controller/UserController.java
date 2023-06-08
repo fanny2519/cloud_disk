@@ -81,4 +81,12 @@ public class UserController {
         return this.userService.delete(ids);
     }
 
+    // 修改用户权限
+    @PostMapping("/grantAuthorization")
+    @ResponseBody
+    public ResultModel grantAuthorization(int[] ids,int[] roleId) {
+
+        return this.userService.grantAuthorization(ids, roleId);
+    }
+
 }

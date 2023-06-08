@@ -90,5 +90,15 @@
         update user set  photo = #{photo}  where id = #{id}
     </update>
 
-
+    <!--修改权限-->
+    <update id="grantAuthorization" parameterType="User">
+        update user set role =
+        <foreach collection="roleId" item="role" >
+            ${role}
+        </foreach>
+        where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            ${id}
+        </foreach>
+    </update>
 </mapper>

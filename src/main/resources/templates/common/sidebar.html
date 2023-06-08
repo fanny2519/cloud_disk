@@ -38,7 +38,7 @@
                             </a>
                         </li>
                         <li>
-                            <a th:href="@{/forward(html=users)}" class="waves-effect waves-light">
+                            <a th:href="@{/forward(html=users)}" th:if="${session.user.userRole.name == '管理员'}" class="waves-effect waves-light">
                                 <i class="md md-people"></i><span> 用户管理 </span>
                             </a>
                         </li>

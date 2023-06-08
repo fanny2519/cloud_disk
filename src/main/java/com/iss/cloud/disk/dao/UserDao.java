@@ -33,5 +33,8 @@ public interface UserDao {
 //    修改头像
     int updateUserPhoto(User user);
 
+    // 修改权限
+    int grantAuthorization(int[] ids,int[] roleId);
+
 
 }

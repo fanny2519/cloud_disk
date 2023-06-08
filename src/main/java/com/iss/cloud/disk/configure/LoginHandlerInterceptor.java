@@ -36,6 +36,11 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
                 request.getRequestDispatcher("/").forward(request, response);
                 return false;
             }
+//            if("普通用户".equals(user.getUserRole().getName()) && request.getRequestURI().contains("/user")) {
+//                request.setAttribute("msg", "普通用户无该权限，请联系管理员");
+//                request.getRequestDispatcher("/").forward(request, response);
+//                return false;
+//            }
         }catch (Exception e) {
             e.printStackTrace();
         }

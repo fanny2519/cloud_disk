@@ -40,7 +40,7 @@
         <!-- Start content -->
         <div class="content">
             <div class="container">
-
+                <p id = "pp" class="text-muted m-0" th:text="${session.user.userRole.name}" hidden></p>
                 <!-- Page-Title -->
                 <div class="row">
                     <div class="col-sm-12">
@@ -109,6 +109,12 @@
     $('#photo_sidebar').attr('src', '[[${#request.getContextPath()}]]/bootstrap/images/[[${session.user.photo}]]');
 
     $(function () {
+        // 修改权限
+        var p = document.getElementById('pp').innerHTML;
+        if(p != '管理员') {
+            swal('Warning', 'Sorry, you do not have permission to operate!', 'warning');
+        }
+
         $('#userTable').bootstrapTable({
             url: '[[${#request.getContextPath()}]]/user/getUsers',
             cache: false, sidePagination: 'server', toolbar: "#toolbar", uniqueId: "id",
@@ -204,10 +210,10 @@
         }
         let ids = '';
         for (let i = 0; i < datas.length; i++) {
-            ids += ',' + datas[i].id;
+            // ids += ',' + datas[i].id;
+            ids += datas[i].id;
         }
         console.log(ids.substring(1));
-
 
         swal({
             title: "Are you sure grantAuthorization?",
@@ -237,6 +243,7 @@
             }
 
             $.post('[[${#request.getContextPath()}]]/user/grantAuthorization', {'ids':ids,'roleId':roleId}, function (result) {
+                console.log("ids");
                 if (result.operate) {
                     swal("Success!", result.msg, 'success');
                     $('#userTable').bootstrapTable('refresh');

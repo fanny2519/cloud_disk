@@ -107,4 +107,12 @@ public class UserServiceImpl implements UserService {
         int result = this.userDao.updateUserPhoto(user);
         return result > 0 ? ResultModel.success("Your avatar data has been update.") : ResultModel.dbError();
     }
+
+
+    @Override
+    public ResultModel grantAuthorization(int[] ids,int[] roleId) {
+        int result = this.userDao.grantAuthorization(ids,roleId);
+        return result > 0 ? ResultModel.success("Your imaginary data has been updated.") : ResultModel.dbError();
+    }
+
 }

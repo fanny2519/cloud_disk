@@ -164,9 +164,7 @@
                 }
 
                 console.log(v_id);
-
                 console.log(v_photo);
-
                 console.log('isEmpty(v_photo) : '+isEmpty(v_photo));
 
                 if (isEmpty(v_photo)) {
@@ -181,10 +179,6 @@
                 // id: "29"
                 // photo: "qita03.jpg"
 
-                //$.each($('#userForm').serializeArray(), function (i, v) {
-                  //  params[v.photo] = v.value;
-                //});
-
                 $.post('[[${#request.getContextPath()}]]/user/updatePhoto', params, function (result) {
                     if (result.operate) {
                         swal("Good Job!", result.msg, "success");
@@ -193,7 +187,6 @@
                     }
                     //
                 }, 'json');
-
 
             }
 
