@@ -174,7 +174,7 @@
             ids += ',' + datas[i].id;
         }
         console.log(ids.substring(1));
-        $.post('[[${#request.getContextPath()}]]/user/delete',{ ids: ids.substring(1)} , function (result) {
+        $.get('[[${#request.getContextPath()}]]/user/delete',{ ids: ids.substring(1)} , function (result) {
             if (result.operate) {
                 swal('Deleted!', result.msg, 'success');
                 $('#userTable').bootstrapTable('refresh');

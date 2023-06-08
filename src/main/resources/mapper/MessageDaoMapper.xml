@@ -39,6 +39,13 @@
         </if>
     </select>
 
+    <select id="getMessageCount" resultType="java.lang.Integer">
+        select count(*) from message where toUser = #{userId}
+        <if test="isRead != 3">
+            and isRead = #{isRead}
+        </if>
+    </select>
+
     <select id="getMessage" parameterType="java.lang.Integer" resultMap="msgMap">
         <include refid="select"/>
         where a.id = #{id}
@@ -46,7 +53,7 @@
 
     <select id="getMessages" resultMap="msgMap">
         <include refid="select"/>
-        where a.toUser = #{userId} order by a.isRead asc, a.createTime desc limit #{start}, #{pageSize}
+        where a.toUser = #{userId} and a.isRead != 3 order by a.isRead asc, a.createTime desc limit #{start}, #{pageSize}
     </select>
 
     <insert id="insert" parameterType="Message">
@@ -60,11 +67,18 @@
         update message set isRead = 1 where id = #{id}
     </update>
 
-    <delete id="delete">
+    <delete id="deleteUser">
         delete from user where id in
         <foreach collection="ids" open="(" separator="," close=")" item="id">
             #{id}
         </foreach>
+    </delete>
+
+    <delete id="delete">
+        delete from message where file = #{ids}
+<!--        <foreach collection="ids" open="(" separator="," close=")" item="id">-->
+<!--            -->
+<!--        </foreach>-->
     </delete>
 
     <update id="neglect">
@@ -80,7 +94,7 @@
 
     <select id="getSharedMessages" resultMap="msgMap">
         <include refid="select"/>
-        where a.fromUser = #{userId} order by a.isRead asc, a.createTime desc limit #{start}, #{pageSize}
+        where a.fromUser = #{userId} order by a.id asc, a.createTime desc limit #{start}, #{pageSize}
     </select>
 
 <!--    <select id="getMessages" resultMap="msgMap">-->

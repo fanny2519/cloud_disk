@@ -206,4 +206,14 @@
         update file set isCollect = 0 where id = #{id}
     </insert>
 
+
+    <!--删除用户的同时删除文件-->
+    <select id="getFilesPath" parameterType="java.lang.Integer" resultType="java.lang.String">
+        select filePath from file where userId = #{userId} limit 1
+    </select>
+
+    <delete id="deletefiles">
+        delete from file where userId = #{userId}
+    </delete>
+
 </mapper>

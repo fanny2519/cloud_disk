@@ -89,7 +89,7 @@ public class UserServiceImpl implements UserService {
             return ResultModel.error("您注册的用户名重复，请重新注册！");
         }else{
             int result = this.userDao.register2(user);
-            return result > 0 ? ResultModel.success("Your imaginary data has been register.") : ResultModel.dbError();
+            return result > 0 ? ResultModel.success("注册成功！") : ResultModel.dbError();
         }
 
     }
@@ -100,32 +100,30 @@ public class UserServiceImpl implements UserService {
         return result > 0 ? ResultModel.success("Your imaginary data has been updated.") : ResultModel.dbError();
     }
 
-    @Override
     public ResultModel delete(List<Integer> ids) {
-       Integer currentUserId = ((User) request.getSession().getAttribute("user")).getId();
+//        Integer currentUserId = ((User) request.getSession().getAttribute("user")).getId();
         for (Integer userId : ids) {
-            int userRole = this.userDao.getRole(currentUserId);
+//            int userRole = this.userDao.getRole(currentUserId);
 //            System.out.println(userRole);
-            if (userRole==1) {
-                String filePath = this.fileDao.getFilesPath(userId);
-                int file_exit = this.fileDao.exists(filePath);
-                if (file_exit > 0){
-                    String[] parts = filePath.split("/");
-                    this.hdfsService.delete("/"+parts[1]);
-                    this.fileDao.deletefiles(userId);
-                    this.userDao.delete(ids);
-                }else {
-                    this.userDao.delete(ids);
-                }
+//            if (userRole==1) {
+            String filePath = this.fileDao.getFilesPath(userId);
+            int file_exit = this.fileDao.exists(filePath);
+            if (file_exit > 0){
+                String[] parts = filePath.split("/");
+                this.hdfsService.delete("/"+parts[1]);
+                this.fileDao.deletefiles(userId);
+                this.userDao.deleteUser(ids);
             }else {
-                return ResultModel.error("You don't have permission ");
+                this.userDao.deleteUser(ids);
             }
+//            }else {
+//                return ResultModel.error("You don't have permission ");
+//            }
 
         }
         return ResultModel.success("Your imaginary data has been deleted.");
-
+//        return result > 0 ? ResultModel.success("Your imaginary data has been deleted.") : ResultModel.dbError();
     }
-
 
     @Override
     public ResultModel updatePhoto(User user) {

@@ -39,4 +39,5 @@ public interface UserDao {
     int grantAuthorization(int[] ids,int[] roleId);
 
 
+    void deleteUser(List<Integer> ids);
 }
