@@ -7,10 +7,9 @@ import com.iss.cloud.disk.model.User;
 import com.iss.cloud.disk.service.MessageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/msg")
@@ -30,6 +29,19 @@ public class MessageController {
     @ResponseBody
     public ResultModel update(int id) {
         return this.messageService.update(id);
+    }
+
+    // 文件回收、分享、消息
+    @PostMapping("/delete")
+    @ResponseBody
+    public ResultModel delete(HttpServletRequest request) {
+        return this.messageService.delete(Integer.parseInt(request.getParameter("id")));
+    }
+
+    @PostMapping("/neglect")
+    @ResponseBody
+    public ResultModel neglect(HttpServletRequest request) {
+        return this.messageService.neglect(Integer.parseInt(request.getParameter("id")));
     }
 
 }

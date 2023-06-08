@@ -21,8 +21,6 @@ public interface FileDao {
 
     List<MyFile> getFilesByIds(int[] ids);
 
-    MyFile getFile(int id);
-
     Map<String, Integer> getCountByType(int userId);
 
     int insertFile(MyFile file);
@@ -34,4 +32,22 @@ public interface FileDao {
     int rename(MyFile file);
 
     void renameByFilePath(String oldPath, String newPath);
+
+    // 文件回收、分享、消息
+    int getRecoveryCount(@Param("flag") int flag, @Param("userId") int userId, @Param("pid") int pid);
+
+    List<MyFile> getRecoveryFiles(@Param("start") Integer start, @Param("pageSize") Integer pageSize, @Param("userId") int userId);
+
+    MyFile getFile(int id);
+
+    int getShareFilesCount(@Param("userId") int userId);
+
+    List<ShareInfoDto> getShareFiles(@Param("start") Integer start,
+                                     @Param("pageSize") Integer pageSize, @Param("userId") int userId);
+
+    int deleteFile(int id);
+
+    int temDelete(int ids);
+
+    int reduction(int id);
 }

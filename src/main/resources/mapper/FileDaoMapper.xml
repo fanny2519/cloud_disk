@@ -98,4 +98,74 @@
     </select>
 
 
+    <!--文件回收、分享、消息-->
+    <select id="getShareFiles" resultType="com.iss.cloud.disk.dto.ShareInfoDto">
+    select f.id,f.fileName,f.fileType,f.filePath,g.toUsers,g.createTime from
+    (
+    select
+    t.file,t.createTime,t.fromUser,GROUP_CONCAT(convert(t.username,char)) as toUsers
+    from
+    (
+    select m.file,m.createTime,m.fromUser,u.username from message m left join
+    user u on m.toUser = u.id ) t
+    where t.fromUser = #{userId}
+    GROUP BY t.file,t.createTime
+    order by t.createTime desc
+        ) g
+        left join file f on g.file = f.id limit #{start}, #{pageSize}
+    </select>
+    <select id="getShareFilesCount" resultType="java.lang.Integer">
+        select count(1) from
+        (
+        select
+        t.file,t.createTime,t.fromUser,GROUP_CONCAT(convert(t.username,char)) as toUsers
+        from
+        (
+        select m.file,m.createTime,m.fromUser,u.username from message m left
+        join user u on m.toUser = u.id ) t
+        where t.fromUser = #{userId}
+        GROUP BY t.file,t.createTime
+        order by t.createTime desc
+        ) g
+        left join file f on g.file = f.id
+    </select>
+    <insert id="deleteFile" parameterType="MyFile">
+        delete from file where id = #{id}
+    </insert>
+
+    <insert id="reduction" parameterType="MyFile">
+        update file set isRecovery = 0 where id = #{id}
+    </insert>
+
+    <insert id="temDelete" parameterType="MyFile">
+        update file set isRecovery = 1 where id = #{ids}
+    </insert>
+    <select id="getRecoveryCount" resultType="java.lang.Integer">
+    select count(*) from file
+    <where>
+    userId = #{userId}
+    <choose>
+    <when test="flag == 1">
+        and isCollect = 1 and isRecovery = 0
+    </when>
+    <when test="flag == 2">
+        and isRecovery = 1
+    </when>
+    <when test="flag == 3">
+        and pid = #{pid} and isRecovery = 0
+    </when>
+    <otherwise>
+        and isRecovery = 0
+    </otherwise>
+    </choose>
+    </where>
+    </select>
+
+
+    <select id="getRecoveryFiles" resultMap="fileMap">
+        <include refid="joinColumn"/>
+        where a.isRecovery = 1 and a.pid = 0 and a.userId = #{userId}
+        limit #{start}, #{pageSize}
+    </select>
+
 </mapper>

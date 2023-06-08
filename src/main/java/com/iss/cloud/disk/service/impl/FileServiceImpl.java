@@ -1,5 +1,6 @@
 package com.iss.cloud.disk.service.impl;
 
+import com.iss.cloud.disk.dto.ShareInfoDto;
 import com.iss.cloud.disk.model.*;
 import com.iss.cloud.disk.dao.FileDao;
 import com.iss.cloud.disk.service.FileService;
@@ -157,4 +158,66 @@ public class FileServiceImpl implements FileService {
         return failNames.size() == 0 ? ResultModel.success() : ResultModel.error("The following data operation failed: ", failNames.toString());
     }
 
+    // 文件回收、分享、消息
+    @Override
+    public Pagination<MyFile> getRecoveryFiles(Pagination page) {
+        int start = (page.getPageNum() - 1) * page.getPageSize();
+        List<MyFile> rows = this.fileDao.getRecoveryFiles(start, page.getPageSize(), page.getCurrentUser());
+        page.setRows(rows);
+        int total = this.fileDao.getRecoveryCount(0, page.getCurrentUser(), 0);
+        page.setTotal(total);
+        return page;
+    }
+
+    @Override
+    public ResultModel temDelete(int ids) {
+        int result = this.fileDao.temDelete(ids);
+        return result > 0 ? ResultModel.success("True") : ResultModel.error();
+    }
+
+    @Override
+    public ResultModel deleteFile(int id) {
+        // 获取文件信息
+        MyFile file = fileDao.getFile(id);
+        // 删除文件
+        boolean deleteResult = hdfsService.delete(file.getFilePath());
+        if (!deleteResult) {
+            return ResultModel.hdfsError();
+        }
+        // 删除文件记录
+        int flag = fileDao.deleteFile(id);
+        if (flag <= 0) {
+            return ResultModel.error();
+        } else {
+            return ResultModel.success();
+        }
+    }
+
+    @Override
+    public ResultModel reduction(int id) {
+        int result = this.fileDao.reduction(id);
+        return result > 0 ? ResultModel.success("True") : ResultModel.error();
+
+    }
+
+    @Override
+    public Pagination<ShareInfoDto> getShareFiles(Pagination page) {
+        int start = (page.getPageNum() - 1) * page.getPageSize();
+        List<ShareInfoDto> rows = this.fileDao.getShareFiles(start,
+                page.getPageSize(), page.getCurrentUser());
+        page.setRows(rows);
+        int total = this.fileDao.getShareFilesCount(page.getCurrentUser());
+        page.setTotal(total);
+        return page;
+    }
+
+    @Override
+    public ResultModel share(int[] ids, int fileId, User currentUser) {
+        Message[] messages = new Message[ids.length];
+        for (int i = 0; i < ids.length; i++) {
+            String content = currentUser.getUsername() + " send a file to you, #Click to view ";
+            messages[i] = new Message(content, currentUser, new User(ids[i]), new MyFile(fileId));
+        }
+        return this.messageService.insert(messages);
+    }
 }

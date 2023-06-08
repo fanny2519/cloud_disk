@@ -21,4 +21,6 @@ public interface MessageService {
 
     Message getMessage(int id);
 
+    ResultModel neglect(int id);
+
 }

@@ -15,7 +15,13 @@ public interface MessageDao {
 
     int getCount(@Param("userId") int userId, @Param("isRead") int isRead);
 
-    List<Message> getMessages(int userId, @Param("start") Integer start, @Param("pageSize") Integer pageSize);
+//    List<Message> getMessages(int userId, @Param("start") Integer start, @Param("pageSize") Integer pageSize);
 
     Message getMessage(int id);
+
+    int neglect(int id);
+
+    int getMessageCount(@Param("userId") int userId, @Param("isRead") int isRead);
+
+    List<Message> getMessages(@Param("userId")int userId, @Param("start") Integer start, @Param("pageSize") Integer pageSize);
 }

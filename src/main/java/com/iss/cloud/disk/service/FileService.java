@@ -33,4 +33,24 @@ public interface FileService {
     ResultModel rename(MyFile myFile, String newPath);
 
     ResultModel move(MoveVO vo);
+
+    /**
+     * 删除文件
+     */
+    ResultModel deleteFile(int id);
+
+    ResultModel temDelete(int ids);
+
+    ResultModel reduction(int id);
+
+    /**
+     * 获得回收站文件列表
+     */
+    Pagination<MyFile> getRecoveryFiles(Pagination page);
+
+    Pagination<ShareInfoDto> getShareFiles(Pagination page);
+
+    ResultModel share(int[] ids, int fileId, User currentUser);
+
+
 }

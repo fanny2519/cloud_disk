@@ -66,4 +66,26 @@
             #{id}
         </foreach>
     </delete>
+
+    <update id="neglect">
+        update message set isRead = 3 where id = #{id}
+    </update>
+
+    <select id="getSharedCount" resultType="java.lang.Integer">
+        select count(*) from message where toUser = #{userId}
+        <if test="isRead != 3">
+            and isRead = #{isRead}
+        </if>
+    </select>
+
+    <select id="getSharedMessages" resultMap="msgMap">
+        <include refid="select"/>
+        where a.fromUser = #{userId} order by a.isRead asc, a.createTime desc limit #{start}, #{pageSize}
+    </select>
+
+<!--    <select id="getMessages" resultMap="msgMap">-->
+<!--        <include refid="select"/>-->
+<!--        where a.toUser = #{userId} and isRead != 3 order by a.id asc, a.createTime desc limit #{start}, #{pageSize}-->
+<!--    </select>-->
+
 </mapper>

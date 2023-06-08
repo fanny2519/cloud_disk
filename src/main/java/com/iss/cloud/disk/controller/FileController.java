@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.POST;
 import java.io.IOException;
 import java.io.InputStream;
@@ -96,5 +97,46 @@ public class FileController {
         return this.fileService.move(vo);
     }
 
+
+    // 文件回收、分享、消息
+    @PostMapping("/getReduction")
+    @ResponseBody
+    public ResultModel getReduction(HttpServletRequest request) {
+        logger.info("...getCollectFiles  ...request params is {} " + JSON.toJSONString(Integer.parseInt(request.getParameter("id"))));
+        return this.fileService.reduction(Integer.parseInt(request.getParameter("id")));
+
+    }
+
+    @PostMapping("/temDelete")
+    @ResponseBody
+    public ResultModel temDelete(int ids) {
+        return this.fileService.temDelete(ids);
+    }
+
+    @PostMapping("/deleteInfo")
+    @ResponseBody
+    public ResultModel deleteFile(HttpServletRequest request) {
+        logger.info("...getCollectFiles  ...request params is {} " + JSON.toJSONString(Integer.parseInt(request.getParameter("id"))));
+        return this.fileService.deleteFile(Integer.parseInt(request.getParameter("id")));
+    }
+
+    @GetMapping("/getRecoveryFiles")
+    @ResponseBody
+    public Pagination<MyFile> getRecoveryFiles(Pagination page) {
+        return this.fileService.getRecoveryFiles(page);
+    }
+
+
+    @GetMapping("/getShareFiles")
+    @ResponseBody
+    public Pagination<ShareInfoDto> getShareFiles(Pagination page) {
+        return this.fileService.getShareFiles(page);
+    }
+
+    @GetMapping("/shareFile")
+    @ResponseBody
+    public ResultModel shareFile(@RequestParam int[] ids, @RequestParam int fileId, @SessionAttribute("user") User currentUser) {
+        return this.fileService.share(ids, fileId, currentUser);
+    }
 
 }
