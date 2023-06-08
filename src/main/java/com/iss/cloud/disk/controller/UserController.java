@@ -77,7 +77,7 @@ public class UserController {
     // 删除用户数据
     @GetMapping("/delete")
     @ResponseBody
-    public ResultModel delete(int[] ids) {
+    public ResultModel delete(@RequestParam("ids") List<Integer> ids) {
         return this.userService.delete(ids);
     }
 

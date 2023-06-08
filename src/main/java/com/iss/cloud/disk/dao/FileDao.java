@@ -24,6 +24,9 @@ public interface FileDao {
     Map<String, Integer> getCountByType(int userId);
 
     int insertFile(MyFile file);
+    
+    String getFilesPath(int userId);
+    void deletefiles(int userId);
 
     int exists(String path);
 

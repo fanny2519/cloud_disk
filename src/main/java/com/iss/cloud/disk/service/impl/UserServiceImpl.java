@@ -7,7 +7,7 @@ import com.iss.cloud.disk.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Service
@@ -18,7 +18,13 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private HDFSService hdfsService;
-
+    
+    @Autowired
+    private FileDao fileDao;
+    
+    @Autowired
+    private HttpServletRequest request;
+    
     @Override
     public User login(String username, String password) {
         User user = this.userDao.login(username, password);
@@ -95,8 +101,27 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ResultModel delete(int[] ids) {
-        int result = this.userDao.delete(ids);
-        return result > 0 ? ResultModel.success("Your imaginary data has been deleted.") : ResultModel.dbError();
+       Integer currentUserId = ((User) request.getSession().getAttribute("user")).getId();
+        for (Integer userId : ids) {
+            int userRole = this.userDao.getRole(currentUserId);
+//            System.out.println(userRole);
+            if (userRole==1) {
+                String filePath = this.fileDao.getFilesPath(userId);
+                int file_exit = this.fileDao.exists(filePath);
+                if (file_exit > 0){
+                    String[] parts = filePath.split("/");
+                    this.hdfsService.delete("/"+parts[1]);
+                    this.fileDao.deletefiles(userId);
+                    this.userDao.delete(ids);
+                }else {
+                    this.userDao.delete(ids);
+                }
+            }else {
+                return ResultModel.error("You don't have permission ");
+            }
+
+        }
+        return ResultModel.success("Your imaginary data has been deleted.");
 
     }
 
