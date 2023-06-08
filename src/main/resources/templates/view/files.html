@@ -58,7 +58,7 @@
                                                     <span class="md md-file-upload" aria-hidden="true"/>&nbsp;上传文件
                                                 </button>
                                                 <button id="btn_delete" class="btn btn-default" onclick="temDelete()">
-                                                    <span class="fa fa-trash-o" aria-hidden="true"/>&nbsp;批量删除
+                                                    <span class="fa fa-trash-o" aria-hidden="true"/>&nbsp;删除文件
                                                 </button>
                                                 <button id="btn_mkdir" class="btn btn-default" onclick="openModal('mkdirPath','mkdirModal')">
                                                     <span class="md md-folder-open" aria-hidden="true"/>&nbsp;新建文件夹
@@ -84,6 +84,7 @@
                         <!-- uploadFile form -->
                         <div th:include="view/uploadFile :: uploadFile" class="row"></div>
 
+                        <div th:include="view/chooseUser :: chooseUser" class="row"></div>
 
                     </div> <!-- container -->
                 </div> <!-- content -->
@@ -154,12 +155,15 @@
                         {field: 'filePath', title: '文件路径', align: 'left'},
                         {field: 'user.username', title: '上传用户', align: 'left'},
                         {field: 'createTime', title: '上传时间', align: 'left'},
-<!--                        {-->
-<!--                            field: 'id', title: '操作', align: 'center', formatter: function (value, row, index) {-->
-<!--                                return '<a href="#" onclick="collection(\'' + value + '\')">收藏</a>&nbsp;&nbsp;'-->
-<!--                                    + '<a href="#" onclick="shareFile(\'' + value + '\')">分享</a>';-->
-<!--                            }-->
-<!--                        },-->
+                        /*
+                        {
+                            field: 'id', title: '操作', align: 'center', formatter: function (value, row, index) {
+                                return '<a href="#" onclick="collection(\'' + value + '\')">收藏</a>&nbsp;&nbsp;'
+                                    + '<a href="#" onclick="shareFile(\'' + value + '\')">分享</a>';
+                            }
+                        },
+                        */
+
                         {
                             field: 'id', title: '操作', align: 'center', formatter: function (value, row, index) {
 
@@ -398,16 +402,15 @@
                 });
             }
 
-
-
-
                 // 看得出来，调用后端请求地址：  /file/rename
+                /*
                 $.get('[[${#request.getContextPath()}]]/file/rename', params, function (result) {
                     if (result.operate) {
                         $('#fileTable').bootstrapTable('refresh');
                     }
                     swal(result.msg);
                 }, 'json');
+                */
 
                 // 移动文件夹
 
@@ -496,6 +499,71 @@
                     }
                 }, 'json');
             }
+
+
+            function shareFile(id) {
+                    $('#fileId').val(id);
+                    $.get('[[${#request.getContextPath()}]]/user/chooseUser', {}, function (data) {
+                        let options = '';
+                        for (let i = 0; i < data.length; i++) {
+                            options += '<option value="' + data[i].id + '">' + data[i].username + '</option>';
+                        }
+                        $('#chooseUser').append(options);
+                        $('#chooseUser').multiSelect({
+                            selectableHeader: "<input type='text' class='form-control search-input' autocomplete='off' placeholder='search...'>",
+                            selectionHeader: "<input type='text' class='form-control search-input' autocomplete='off' placeholder='search...'>",
+                            afterInit: function (ms) {
+                                let that = this,
+                                    $selectableSearch = that.$selectableUl.prev(),
+                                    $selectionSearch = that.$selectionUl.prev(),
+                                    selectableSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selectable:not(.ms-selected)',
+                                    selectionSearchString = '#' + that.$container.attr('id') + ' .ms-elem-selection.ms-selected';
+
+                                that.qs1 = $selectableSearch.quicksearch(selectableSearchString).on('keydown', function (e) {
+                                    if (e.which === 40) {
+                                        that.$selectableUl.focus();
+                                        return false;
+                                    }
+                                });
+
+                                that.qs2 = $selectionSearch.quicksearch(selectionSearchString)
+                                    .on('keydown', function (e) {
+                                        if (e.which == 40) {
+                                            that.$selectionUl.focus();
+                                            return false;
+                                        }
+                                    });
+                            },
+                            afterSelect: function () {
+                                this.qs1.cache();
+                                this.qs2.cache();
+                            },
+                            afterDeselect: function () {
+                                this.qs1.cache();
+                                this.qs2.cache();
+                            }
+                        });
+                    }, 'json');
+
+                    $('#chooseUserModal').modal('show');
+                }
+
+
+                function share() {
+                    let options = $('.ms-elem-selection');
+                    let ids = '';
+                    for (let i = 0; i < options.length; i++) {
+                        if ($(options[i]).css('display') != 'none') {
+                            ids += ',' + options[i].id.substring(0, options[i].id.indexOf('-'));
+                        }
+                    }
+                    ids = ids.substring(1);
+                    let fileId = $('#fileId').val();
+                    $.get('[[${#request.getContextPath()}]]/file/shareFile', {ids, fileId}, function (result) {
+                        swal("Operated", result.msg, result.operate ? 'success' : 'info');
+                        $('#chooseUserModal').modal('hide');
+                    }, 'json');
+                }
 
 
             </script>
