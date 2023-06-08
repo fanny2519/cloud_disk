@@ -25,7 +25,7 @@ public interface UserService {
 
     ResultModel updateUser(User user);
 
-    ResultModel delete(int[] ids);
+    ResultModel delete(List<Integer> ids);
 
     ResultModel updatePhoto(User user);
 
