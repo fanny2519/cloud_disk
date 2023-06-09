@@ -67,18 +67,15 @@
         update message set isRead = 1 where id = #{id}
     </update>
 
-    <delete id="deleteUser">
-        delete from user where id in
-        <foreach collection="ids" open="(" separator="," close=")" item="id">
-            #{id}
-        </foreach>
-    </delete>
+<!--    <delete id="delete">-->
+<!--        delete from user where id in-->
+<!--        <foreach collection="ids" open="(" separator="," close=")" item="id">-->
+<!--            #{id}-->
+<!--        </foreach>-->
+<!--    </delete>-->
 
     <delete id="delete">
         delete from message where file = #{ids}
-<!--        <foreach collection="ids" open="(" separator="," close=")" item="id">-->
-<!--            -->
-<!--        </foreach>-->
     </delete>
 
     <update id="neglect">
